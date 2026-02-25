@@ -22,7 +22,7 @@ type GameState = {
 
 export const useGameStore = create<GameState>((set) => ({
   zones: [
-    { id: "nose", name: "Нос", health: 100, infection: 10, macrophages: 1 },
+    { id: "nose", name: "Нос", health: 100, infection: 1, macrophages: 1 },
     { id: "lungs", name: "Лёгкие", health: 100, infection: 0, macrophages: 0 },
   ],
   tick: 0,
@@ -57,12 +57,51 @@ export const useGameStore = create<GameState>((set) => ({
           health: newHealth,
         };
       });
-
       const isDead = updatedZones.some((z) => z.health <= 0);
+      if (isDead) {
+        return {
+          zones: updatedZones,
+          gameStatus: isDead ? "lost" : "playing",
+        };
+      }
 
       return {
-        zones: updatedZones,
-        gameStatus: isDead ? "lost" : "playing",
+        tick: state.tick + 1,
+        zones: state.zones.map((z) => {
+          const infectionGrowth = Math.random() * 2;
+          const immuneResponse = z.macrophages * 1.5;
+
+          const newInfection = Math.max(0, z.infection + infectionGrowth - immuneResponse);
+
+          const healthLoss = newInfection > 20 ? 1 : 0;
+
+          return {
+            ...z,
+            infection: newInfection,
+            health: Math.max(0, z.health - healthLoss),
+          };
+        }),
       };
     }),
+
+  // gameTick: () =>
+  //   set((state) => {
+  //     if (state.gameStatus !== "playing") return state;
+
+  //     const updatedZones = state.zones.map((zone) => {
+  //       const newHealth = zone.health - zone.infection * 0.1;
+
+  //       return {
+  //         ...zone,
+  //         health: newHealth,
+  //       };
+  //     });
+
+  //     const isDead = updatedZones.some((z) => z.health <= 0);
+
+  //     return {
+  //       zones: updatedZones,
+  //       gameStatus: isDead ? "lost" : "playing",
+  //     };
+  //   }),
 }));
