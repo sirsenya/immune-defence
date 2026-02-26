@@ -1,4 +1,3 @@
-import { Game } from "./Game";
 import { ReligionGame } from "./religion/ReligionGame";
 
 function App() {
