@@ -1,21 +1,21 @@
 import { useEffect } from "react";
-import { useGameStore } from "../store/gameStore";
+import { useReligionGameStore } from "./religionStore";
 
-export const Game = () => {
-  const { zones, gameTick, spawnMacrophage, reset, gameStatus } = useGameStore();
+export const ReligionGame = () => {
+  const { worshippers, gameTick, reset, gameStatus } = useReligionGameStore();
 
   useEffect(() => {
     let animationFrameId: number;
-  
+
     const loop = () => {
       if (gameStatus === "playing") {
         gameTick();
         animationFrameId = requestAnimationFrame(loop);
       }
     };
-  
+
     animationFrameId = requestAnimationFrame(loop);
-  
+
     return () => cancelAnimationFrame(animationFrameId);
   }, [gameStatus]);
 
@@ -29,31 +29,29 @@ export const Game = () => {
   //   const interval = setInterval(() => {
   //     gameTick()
   //   }, 500)
-  
+
   //   return () => clearInterval(interval)
   // }, [])
-  
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>Immune Defense</h1>
+      <h1>Religion Game</h1>
       {gameStatus === "lost" && <h2 style={{ color: "red" }}>ПРОИГРЫШ</h2>}
 
-      {zones.map((zone) => (
+      {worshippers.map((worshipper) => (
         <div
-          key={zone.id}
+          key={worshipper.id}
           style={{
             border: "1px solid gray",
             marginBottom: 10,
             padding: 10,
           }}
         >
-          <h3>{zone.name}</h3>
-          <p>Health: {zone.health}</p>
-          <p>Infection: {zone.infection.toFixed(1)}</p>
-          <p>Macrophages: {zone.macrophages}</p>
+          <h3>{worshipper.name}</h3>
+          <p>Grace: {worshipper.gracePoints}</p>
+          <p>Status: {worshipper.status}</p>
 
-          <button onClick={() => spawnMacrophage(zone.id)}>+ Макрофаг</button>
+          <button onClick={() => {}}>+ Макрофаг</button>
         </div>
       ))}
       <button onClick={() => reset()}>Reset</button>
