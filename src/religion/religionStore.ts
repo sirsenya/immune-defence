@@ -74,14 +74,35 @@ export const useReligionGameStore = create<GameState>((set) => ({
     set((state) => {
       if (state.gameStatus !== "playing") return state;
 
-      const isDead = false;
-      if (isDead) {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      const updated = state.worshippers.map((w) => {
+        let newX = w.position.x + w.velocity.dx;
+        let newY = w.position.y + w.velocity.dy;
+
+        let dx = w.velocity.dx;
+        let dy = w.velocity.dy;
+
+        // отражение от стен
+        if (newX <= 0 || newX >= width - w.size) dx = -dx;
+        if (newY <= 0 || newY >= height - w.size) dy = -dy;
+
+        // иногда меняем направление случайно
+        if (Math.random() < 0.01) {
+          dx += (Math.random() - 0.5) * 0.2;
+          dy += (Math.random() - 0.5) * 0.2;
+        }
+
         return {
-          gameStatus: isDead ? "lost" : "playing",
+          ...w,
+          position: { x: newX, y: newY },
+          velocity: { dx, dy },
         };
-      }
+      });
 
       return {
+        worshippers: updated,
         tick: state.tick + 1,
       };
     }),

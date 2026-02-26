@@ -34,27 +34,28 @@ export const ReligionGame = () => {
   // }, [])
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Religion Game</h1>
-      {gameStatus === "lost" && <h2 style={{ color: "red" }}>ПРОИГРЫШ</h2>}
-
-      {worshippers.map((worshipper) => (
+    <div
+      style={{
+        position: "relative",
+        width: "100vw",
+        height: "100vh",
+        background: "#111",
+        overflow: "hidden",
+      }}
+    >
+      {worshippers.map((w) => (
         <div
-          key={worshipper.id}
+          key={w.id}
           style={{
-            border: "1px solid gray",
-            marginBottom: 10,
-            padding: 10,
+            position: "absolute",
+            left: w.position.x,
+            top: w.position.y,
+            width: w.size,
+            height: w.size,
+            background: "white",
           }}
-        >
-          <h3>{worshipper.name}</h3>
-          <p>Grace: {worshipper.gracePoints}</p>
-          <p>Status: {worshipper.status}</p>
-
-          <button onClick={() => {}}>+ Макрофаг</button>
-        </div>
+        />
       ))}
-      <button onClick={() => reset()}>Reset</button>
     </div>
   );
 };
