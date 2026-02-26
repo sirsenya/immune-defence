@@ -18,6 +18,20 @@ export const Game = () => {
   
     return () => cancelAnimationFrame(animationFrameId);
   }, [gameStatus]);
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     updateGame()
+  //   }, 16) // ~60fps
+  //   return () => clearInterval(interval)
+  // }, [])
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     gameTick()
+  //   }, 500)
+  
+  //   return () => clearInterval(interval)
+  // }, [])
   
 
   return (

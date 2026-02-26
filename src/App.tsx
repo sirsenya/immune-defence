@@ -1,7 +1,8 @@
-import { Game } from "./game";
+import { Game } from "./Game";
+import { ReligionGame } from "./religion/ReligionGame";
 
 function App() {
-  return <Game />;
+  return <ReligionGame />;
 }
 
 export default App;
