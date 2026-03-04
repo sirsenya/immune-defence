@@ -3,7 +3,7 @@ export class Worshipper {
   name: string;
   position: Coordinates;
   size: number;
-  status: WorshipperStatus;
+  status: WorshipperStatuses;
   gracePoints: number;
   velocity: Coordinates;
 
@@ -20,7 +20,7 @@ export class Worshipper {
     name: string;
     position: Coordinates;
     size: number;
-    status: WorshipperStatus;
+    status: WorshipperStatuses;
     gracePoints: number;
     velocity: Coordinates;
   }) {
@@ -34,6 +34,10 @@ export class Worshipper {
   }
 }
 
-export type WorshipperStatus = "praying" | "idle" | "blaspheming";
+export enum WorshipperStatuses {
+  praying = "praynig",
+  idle = "idle",
+  blaspheming = "blaspheming",
+}
 
 type Coordinates = { x: number; y: number };
