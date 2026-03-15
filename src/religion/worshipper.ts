@@ -32,6 +32,12 @@ export class Worshipper {
     this.gracePoints = gracePoints;
     this.velocity = velocity;
   }
+
+  //TODO add currentVelocity and defaultVelocity to Worshipper
+  static getSomeVelocity = (): Coordinates => ({
+  x: (Math.random() - 0.5) * 0.5,
+  y: (Math.random() - 0.5) * 0.5,
+});
 }
 
 export enum WorshipperStatuses {
@@ -40,4 +46,4 @@ export enum WorshipperStatuses {
   blaspheming = "blaspheming",
 }
 
-type Coordinates = { x: number; y: number };
+export type Coordinates = { x: number; y: number };

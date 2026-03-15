@@ -3,7 +3,7 @@ import { useReligionGameStore } from "./religionStore";
 import { Worshippers } from "./Worshippers";
 
 export const ReligionGame = () => {
-  const { worshippers, gameTick, reset, gameStatus } = useReligionGameStore();
+  const { worshippers, gameTick, gameStatus } = useReligionGameStore();
 
   useEffect(() => {
     let animationFrameId: number;

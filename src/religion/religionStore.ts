@@ -11,6 +11,7 @@ type GameState = {
   setGameStatus: () => void;
   gameTick: () => void;
   reset: () => void;
+  addGrace: (id: number) => void;
 };
 
 export const useReligionGameStore = create<GameState>((set) => ({
@@ -19,6 +20,15 @@ export const useReligionGameStore = create<GameState>((set) => ({
   tick: 0,
 
   gameStatus: "playing",
+
+  addGrace: (id: number) =>
+    set((state) => ({
+      worshippers: state.worshippers.map((w) =>
+        w.id === id
+          ? { ...w, gracePoints: w.gracePoints + 1 }
+          : w
+      ),
+    })),
 
   setGameStatus: () => set({ gameStatus: "lost" }),
 
@@ -54,6 +64,15 @@ export const useReligionGameStore = create<GameState>((set) => ({
           ];
           dx += (Math.random() - 0.5) * 0.2;
           dy += (Math.random() - 0.5) * 0.2;
+        }
+
+        if (w.status === WorshipperStatuses.praying || w.status === WorshipperStatuses.blaspheming) {
+          newX = w.position.x;
+          newY = w.position.y;
+          w.velocity = { x: 0, y: 0 };
+        }
+        else {
+          w.velocity = Worshipper.getSomeVelocity();
         }
 
         return {

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { WorshipperStatuses, type Worshipper } from "./worshipper";
+import { useReligionGameStore } from "./religionStore";
 
 export const Worshippers = (worshippers: Worshipper[]) => {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-
+  const addGrace = useReligionGameStore((s) => s.addGrace);
   return (
     <div
       style={{
@@ -19,6 +20,11 @@ export const Worshippers = (worshippers: Worshipper[]) => {
           key={w.id}
           onMouseEnter={() => setHoveredId(w.id)}
           onMouseLeave={() => setHoveredId(null)}
+          onClick={() => {
+            if (w.status === WorshipperStatuses.praying) {
+              addGrace(w.id);
+            }
+          }}
           style={{
             position: "absolute",
             left: w.position.x,
@@ -31,7 +37,7 @@ export const Worshippers = (worshippers: Worshipper[]) => {
                 : w.status === WorshipperStatuses.blaspheming
                   ? "red"
                   : "white",
-            cursor: "pointer",
+            cursor: w.status === WorshipperStatuses.praying ? "pointer" : "default",
           }}
         >
           {hoveredId === w.id && (
