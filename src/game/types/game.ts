@@ -1,11 +1,6 @@
 // Core game type definitions for Мобка
 
-export type ActionId =
-  | 'summons'
-  | 'docs'
-  | 'detain'
-  | 'neighbors'
-  | 'medical';
+export type ActionId = 'summons' | 'docs' | 'detain' | 'neighbors' | 'medical';
 
 export interface ActionDef {
   id: ActionId;

@@ -149,13 +149,14 @@ export class GameScene extends Phaser.Scene {
     const startY = 100;
     const lineH = 96;
 
-    const labels: { key: keyof GameState['resources']; name: string; color: number; max?: number; money?: boolean }[] = [
-      { key: 'money', name: 'БЮДЖЕТ', color: COLORS.green, money: true },
-      { key: 'admin', name: 'АДМ. РЕСУРС', color: COLORS.inkSoft, max: 200 },
-      { key: 'discontent', name: 'НЕДОВОЛЬСТВО', color: COLORS.warning, max: 100 },
-      { key: 'security', name: 'БЕЗОПАСНОСТЬ', color: COLORS.inkSoft, max: 100 },
-      { key: 'loyalty', name: 'НАЧАЛЬСТВО', color: COLORS.stamp, max: 100 },
-    ];
+    const labels: { key: keyof GameState['resources']; name: string; color: number; max?: number; money?: boolean }[] =
+      [
+        { key: 'money', name: 'БЮДЖЕТ', color: COLORS.green, money: true },
+        { key: 'admin', name: 'АДМ. РЕСУРС', color: COLORS.inkSoft, max: 200 },
+        { key: 'discontent', name: 'НЕДОВОЛЬСТВО', color: COLORS.warning, max: 100 },
+        { key: 'security', name: 'БЕЗОПАСНОСТЬ', color: COLORS.inkSoft, max: 100 },
+        { key: 'loyalty', name: 'НАЧАЛЬСТВО', color: COLORS.stamp, max: 100 },
+      ];
 
     for (let i = 0; i < labels.length; i++) {
       const def = labels[i]!;
@@ -549,7 +550,9 @@ export class GameScene extends Phaser.Scene {
 
   private refreshAll(): void {
     const s = this.mobka.state;
-    this.dayLabel.setText(`ДЕНЬ ${s.day}/${RUN_LENGTH}   ПЛАН: ${s.plan}   ${s.status === 'playing' ? '' : '[' + s.status + ']'}`);
+    this.dayLabel.setText(
+      `ДЕНЬ ${s.day}/${RUN_LENGTH}   ПЛАН: ${s.plan}   ${s.status === 'playing' ? '' : '[' + s.status + ']'}`,
+    );
     this.refreshResources();
     this.refreshPool();
     this.refreshSelected();

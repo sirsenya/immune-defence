@@ -17,11 +17,7 @@ interface CollectOptions {
 }
 
 // Compute the per-person effective chance of successful collection.
-export function effectiveChance(
-  person: PersonData,
-  state: GameState,
-  action: ActionId | undefined,
-): number {
+export function effectiveChance(person: PersonData, state: GameState, action: ActionId | undefined): number {
   const actionDef = action ? ACTIONS[action] : undefined;
   const base = person.attendanceChance / 100;
   const actionBonus = actionDef ? actionDef.attendanceBonus / 100 : 0;
@@ -38,7 +34,10 @@ export function effectiveChance(
 }
 
 // Apply the actual day calculation: roll attendance and produce outcomes.
-export function calculateDay(state: GameState, opts: CollectOptions): {
+export function calculateDay(
+  state: GameState,
+  opts: CollectOptions,
+): {
   result: DayResult;
   outcomes: PersonOutcome[];
 } {
@@ -94,12 +93,7 @@ export function calculateDay(state: GameState, opts: CollectOptions): {
       perPersonMultiplier += 0.2;
     }
     // Special order upgrade: last person if plan almost met => x2.
-    if (
-      upgradedSpecialOrder &&
-      i === lastIdx &&
-      totalCollected >= state.plan - 2 &&
-      totalCollected < state.plan + 4
-    ) {
+    if (upgradedSpecialOrder && i === lastIdx && totalCollected >= state.plan - 2 && totalCollected < state.plan + 4) {
       perPersonMultiplier *= 2;
     }
 

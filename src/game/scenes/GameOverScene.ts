@@ -19,7 +19,8 @@ export class GameOverScene extends Phaser.Scene {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor(COLORS.bg);
 
-    this.add.rectangle(width / 2, height / 2, width - 80, height - 80, COLORS.panel, 1)
+    this.add
+      .rectangle(width / 2, height / 2, width - 80, height - 80, COLORS.panel, 1)
       .setStrokeStyle(3, COLORS.red, 1);
 
     const stamp = this.add.rectangle(width / 2, 140, 360, 80, 0x000000, 0);
@@ -33,13 +34,15 @@ export class GameOverScene extends Phaser.Scene {
     t.setOrigin(0.5);
     t.setRotation(Phaser.Math.DegToRad(-8));
 
-    this.add.text(width / 2, height / 2 - 60, this.reason || 'Отдел расформирован.', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '20px',
-      color: '#d8c9a8',
-      align: 'center',
-      wordWrap: { width: width - 200 },
-    }).setOrigin(0.5);
+    this.add
+      .text(width / 2, height / 2 - 60, this.reason || 'Отдел расформирован.', {
+        fontFamily: '"Courier New", monospace',
+        fontSize: '20px',
+        color: '#d8c9a8',
+        align: 'center',
+        wordWrap: { width: width - 200 },
+      })
+      .setOrigin(0.5);
 
     const past = this.mobka.state.pastDays;
     const total = past.reduce((acc, d) => acc + d.collected, 0);
@@ -54,11 +57,13 @@ export class GameOverScene extends Phaser.Scene {
       `Макс. комбо: x${maxCombo.toFixed(2)}`,
     ];
     for (let i = 0; i < stats.length; i++) {
-      this.add.text(width / 2, height / 2 + 10 + i * 26, stats[i] ?? '', {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '16px',
-        color: '#8a7a60',
-      }).setOrigin(0.5);
+      this.add
+        .text(width / 2, height / 2 + 10 + i * 26, stats[i] ?? '', {
+          fontFamily: '"Courier New", monospace',
+          fontSize: '16px',
+          color: '#8a7a60',
+        })
+        .setOrigin(0.5);
     }
 
     this.makeButton(width / 2, height - 100, 'НАЧАТЬ НОВЫЙ RUN', () => {

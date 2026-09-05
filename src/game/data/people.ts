@@ -27,10 +27,7 @@ export function generateCitizenPool(rng: () => number): PersonData[] {
     const income = randInt(rng, 18, 95) * 1000;
     const fear = randInt(rng, 15, 70);
     const resistance = randInt(rng, 10, 80);
-    const attendanceChance = Math.max(
-      5,
-      Math.min(95, 40 + fear / 2 - resistance / 3 + randInt(rng, -8, 8)),
-    );
+    const attendanceChance = Math.max(5, Math.min(95, 40 + fear / 2 - resistance / 3 + randInt(rng, -8, 8)));
     pool.push({
       id: `cit_${i}`,
       name,

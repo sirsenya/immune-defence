@@ -34,43 +34,30 @@ export class MainMenuScene extends Phaser.Scene {
     });
     title.setOrigin(0.5);
 
-    const subtitle = this.add.text(
-      width / 2,
-      height / 2 - 150,
-      'САТИРИЧЕСКИЙ ОТДЕЛ МОБИЛИЗАЦИИ',
-      {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '20px',
-        color: '#8a7a60',
-      },
-    );
+    const subtitle = this.add.text(width / 2, height / 2 - 150, 'ОТДЕЛ МОБИЛИЗАЦИИ', {
+      fontFamily: '"Courier New", monospace',
+      fontSize: '20px',
+      color: '#8a7a60',
+    });
     subtitle.setOrigin(0.5);
 
-    const tag = this.add.text(
-      width / 2,
-      height / 2 - 110,
-      '«план есть — работа есть»',
-      {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '16px',
-        color: '#a3331f',
-      },
-    );
+    const tag = this.add.text(width / 2, height / 2 - 110, '«план есть — надо вполнять »', {
+      fontFamily: '"Courier New", monospace',
+      fontSize: '16px',
+      color: '#a3331f',
+    });
     tag.setOrigin(0.5);
 
     // Buttons
-    this.makeButton(width / 2, height / 2 + 20, 'НОВЫЙ RUN', () => {
+    this.makeButton(width / 2, height / 2 + 20, 'НОВАЯ ИГРА', () => {
       this.mobka.startNewRun();
       this.scene.start('Game');
     });
 
     this.makeButton(width / 2, height / 2 + 80, 'ПРОДОЛЖИТЬ', () => {
       const ok = this.mobka.tryLoad();
-      if (ok) {
-        this.scene.start('Game');
-      } else {
-        this.scene.start('Game');
-      }
+      if (ok) this.scene.start('Game');
+      else this.scene.start('Game');
     });
 
     // Footer

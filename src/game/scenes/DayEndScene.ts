@@ -48,7 +48,8 @@ export class DayEndScene extends Phaser.Scene {
     const panelY = 100;
     const panelW = width - 120;
     const panelH = 360;
-    this.add.rectangle(panelX + panelW / 2, panelY + panelH / 2, panelW, panelH, COLORS.panel, 1)
+    this.add
+      .rectangle(panelX + panelW / 2, panelY + panelH / 2, panelW, panelH, COLORS.panel, 1)
       .setStrokeStyle(2, COLORS.border, 1);
 
     this.add.text(panelX + 20, panelY + 14, `ИТОГИ ДНЯ ${result.day}`, {
@@ -57,8 +58,8 @@ export class DayEndScene extends Phaser.Scene {
       color: '#a3331f',
     });
 
-    const headlineColor = result.overfulfilledPercent >= 5 ? '#a3d97a' :
-      result.overfulfilledPercent >= -5 ? '#d8c9a8' : '#ff6b3a';
+    const headlineColor =
+      result.overfulfilledPercent >= 5 ? '#a3d97a' : result.overfulfilledPercent >= -5 ? '#d8c9a8' : '#ff6b3a';
     this.add.text(panelX + 20, panelY + 60, result.message, {
       fontFamily: '"Courier New", monospace',
       fontSize: '36px',
@@ -109,7 +110,8 @@ export class DayEndScene extends Phaser.Scene {
     const panelY = 100;
     const panelW = width - 120;
     const panelH = height - 200;
-    this.add.rectangle(panelX + panelW / 2, panelY + panelH / 2, panelW, panelH, COLORS.panel, 1)
+    this.add
+      .rectangle(panelX + panelW / 2, panelY + panelH / 2, panelW, panelH, COLORS.panel, 1)
       .setStrokeStyle(2, COLORS.border, 1);
 
     this.add.text(panelX + 20, panelY + 14, `СОБЫТИЕ: ${this.currentEvent.title}`, {
@@ -128,10 +130,18 @@ export class DayEndScene extends Phaser.Scene {
     for (let i = 0; i < choices.length; i++) {
       const c = choices[i]!;
       const y = panelY + 160 + i * 70;
-      this.makeButton(panelX + 30, y, panelW - 60, 60, c.label, () => {
-        this.mobka.applyEventChoice(i);
-        this.continueAfterEvent();
-      }, c.description);
+      this.makeButton(
+        panelX + 30,
+        y,
+        panelW - 60,
+        60,
+        c.label,
+        () => {
+          this.mobka.applyEventChoice(i);
+          this.continueAfterEvent();
+        },
+        c.description,
+      );
     }
   }
 
@@ -157,7 +167,8 @@ export class DayEndScene extends Phaser.Scene {
     const panelY = 100;
     const panelW = width - 120;
     const panelH = height - 240;
-    this.add.rectangle(panelX + panelW / 2, panelY + panelH / 2, panelW, panelH, COLORS.panel, 1)
+    this.add
+      .rectangle(panelX + panelW / 2, panelY + panelH / 2, panelW, panelH, COLORS.panel, 1)
       .setStrokeStyle(2, COLORS.border, 1);
 
     this.add.text(panelX + 20, panelY + 14, 'ОТДЕЛ СНАБЖЕНИЯ', {
@@ -167,11 +178,13 @@ export class DayEndScene extends Phaser.Scene {
     });
 
     const state = this.mobka.state;
-    this.add.text(panelX + panelW - 20, panelY + 16, `Бюджет: ₽${state.resources.money}`, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '16px',
-      color: '#a3d97a',
-    }).setOrigin(1, 0);
+    this.add
+      .text(panelX + panelW - 20, panelY + 16, `Бюджет: ₽${state.resources.money}`, {
+        fontFamily: '"Courier New", monospace',
+        fontSize: '16px',
+        color: '#a3d97a',
+      })
+      .setOrigin(1, 0);
 
     if (this.currentShopItems.length === 0) {
       this.add.text(panelX + 20, panelY + 60, 'Снабжение закончилось. Все улучшения приобретены.', {
@@ -262,16 +275,29 @@ export class DayEndScene extends Phaser.Scene {
       fontSize: '24px',
       color: '#d8c9a8',
     });
-    this.add.text(width - 16, 14,
-      `ДЕНЬ ${s.day}/${RUN_LENGTH}   ПЛАН ${s.plan}   ₽${s.resources.money}   адм ${s.resources.admin}   недовольство ${s.resources.discontent}`,
-      {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '14px',
-        color: '#d8c9a8',
-      }).setOrigin(1, 0);
+    this.add
+      .text(
+        width - 16,
+        14,
+        `ДЕНЬ ${s.day}/${RUN_LENGTH}   ПЛАН ${s.plan}   ₽${s.resources.money}   адм ${s.resources.admin}   недовольство ${s.resources.discontent}`,
+        {
+          fontFamily: '"Courier New", monospace',
+          fontSize: '14px',
+          color: '#d8c9a8',
+        },
+      )
+      .setOrigin(1, 0);
   }
 
-  private makeButton(x: number, y: number, w: number, h: number, label: string, onClick: () => void, sub?: string): void {
+  private makeButton(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    label: string,
+    onClick: () => void,
+    sub?: string,
+  ): void {
     const bg = this.add.rectangle(x + w / 2, y + h / 2, w, h, COLORS.panelLight, 1);
     bg.setStrokeStyle(2, COLORS.border, 1);
     bg.setInteractive({ useHandCursor: true });

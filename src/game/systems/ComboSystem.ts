@@ -81,13 +81,7 @@ function bigFamilyRule(): Rule {
   };
 }
 
-const BASE_RULES: Rule[] = [
-  professionRule(),
-  familyRule(),
-  ageGroupRule(),
-  varietyRule(),
-  bigFamilyRule(),
-];
+const BASE_RULES: Rule[] = [professionRule(), familyRule(), ageGroupRule(), varietyRule(), bigFamilyRule()];
 
 export function evaluateCombos(selected: PersonData[], state: { upgrades: { id: string }[] }): ComboResult {
   let multiplier = 1;

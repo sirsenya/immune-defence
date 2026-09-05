@@ -12,11 +12,7 @@ const UPGRADE_FREE_DETAIN_FIRST = true;
 const UPGRADE_SECRETARY_FREE_EVERY = 5;
 
 // Try to apply an action to a person. Mutates resources and the person state.
-export function applyAction(
-  state: GameState,
-  person: PersonData,
-  actionId: ActionId,
-): ActionAttemptResult {
+export function applyAction(state: GameState, person: PersonData, actionId: ActionId): ActionAttemptResult {
   const def = ACTIONS[actionId];
 
   // Upgrade-aware cost calculation
@@ -78,10 +74,7 @@ export function applyAction(
 
   // Side effects
   if (def.effects.discontentDelta) {
-    state.resources.discontent = Math.max(
-      0,
-      Math.min(100, state.resources.discontent + def.effects.discontentDelta),
-    );
+    state.resources.discontent = Math.max(0, Math.min(100, state.resources.discontent + def.effects.discontentDelta));
   }
 
   // Track action on person
