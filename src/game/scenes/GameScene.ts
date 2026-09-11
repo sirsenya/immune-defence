@@ -144,10 +144,15 @@ export class GameScene extends Phaser.Scene {
   // --- Resources ---------------------------------------------------------
 
   private drawResources(_width: number, _height: number): void {
-    // Place 5 resource lines with a tiny bar.
+    // Resource panel occupies x=8..228 (width 220). Inner content area is 16..216.
     const startX = 16;
     const startY = 100;
-    const lineH = 96;
+    const lineH = 92;
+    const barX = startX;
+    const barW = 196;
+    const barYOffset = 26;
+    const barH = 10;
+    const valueRightX = startX + barW;
 
     const labels: { key: keyof GameState['resources']; name: string; color: number; max?: number; money?: boolean }[] =
       [
@@ -163,28 +168,30 @@ export class GameScene extends Phaser.Scene {
       const y = startY + i * lineH;
       this.add.text(startX, y, def.name, {
         fontFamily: '"Courier New", monospace',
-        fontSize: '12px',
+        fontSize: '13px',
         color: '#d8c9a8',
       });
-      const text = this.add.text(startX + 200, y, '', {
+      const text = this.add.text(valueRightX, y, '', {
         fontFamily: '"Courier New", monospace',
         fontSize: '14px',
         color: '#ffffff',
       });
       text.setOrigin(1, 0);
       this.resourceTexts.push(text);
-      // bar background
-      const barBg = this.add.rectangle(startX + 100, y + 30, 200, 14, COLORS.panelLight, 1);
+      // bar background (fits within the resource panel)
+      const barBg = this.add.rectangle(barX, y + barYOffset, barW, barH, COLORS.panelLight, 1);
       barBg.setOrigin(0, 0);
       const bar = this.add.graphics();
       this.resourceBars.push(bar);
-      bar.x = startX;
-      bar.y = y + 30;
+      bar.x = barX;
+      bar.y = y + barYOffset;
     }
   }
 
   private refreshResources(): void {
     const r = this.mobka.state.resources;
+    const barW = 196;
+    const barH = 10;
     const values: { key: keyof GameState['resources']; max: number; money: boolean }[] = [
       { key: 'money', max: 1, money: true },
       { key: 'admin', max: 200, money: false },
@@ -192,8 +199,6 @@ export class GameScene extends Phaser.Scene {
       { key: 'security', max: 100, money: false },
       { key: 'loyalty', max: 100, money: false },
     ];
-    const startY = 100;
-    const lineH = 96;
     for (let i = 0; i < values.length; i++) {
       const def = values[i]!;
       const value = r[def.key];
@@ -208,10 +213,8 @@ export class GameScene extends Phaser.Scene {
       const pctVal = def.money ? 0 : Math.max(0, Math.min(1, value / def.max));
       const fillColor = def.key === 'discontent' ? COLORS.red : COLORS.green;
       bar.fillStyle(fillColor, 1);
-      bar.fillRect(100, 0, 200 * pctVal, 14);
+      bar.fillRect(0, 0, barW * pctVal, barH);
     }
-    void startY;
-    void lineH;
   }
 
   // --- Pool --------------------------------------------------------------
