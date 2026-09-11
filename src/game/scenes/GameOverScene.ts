@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { Game } from '../Game';
 import { COLORS } from '../../config/constants';
+import { TEXT } from '../../ui/styles';
 
 export class GameOverScene extends Phaser.Scene {
   private mobka!: Game;
@@ -26,19 +27,13 @@ export class GameOverScene extends Phaser.Scene {
     const stamp = this.add.rectangle(width / 2, 140, 360, 80, 0x000000, 0);
     stamp.setStrokeStyle(4, COLORS.red, 1);
 
-    const t = this.add.text(width / 2, 140, 'УВОЛЕН', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '54px',
-      color: '#a3331f',
-    });
+    const t = this.add.text(width / 2, 140, 'УВОЛЕН', TEXT.goTitle);
     t.setOrigin(0.5);
     t.setRotation(Phaser.Math.DegToRad(-8));
 
     this.add
       .text(width / 2, height / 2 - 60, this.reason || 'Отдел расформирован.', {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '20px',
-        color: '#d8c9a8',
+        ...TEXT.goReason,
         align: 'center',
         wordWrap: { width: width - 200 },
       })
@@ -57,13 +52,7 @@ export class GameOverScene extends Phaser.Scene {
       `Макс. комбо: x${maxCombo.toFixed(2)}`,
     ];
     for (let i = 0; i < stats.length; i++) {
-      this.add
-        .text(width / 2, height / 2 + 10 + i * 26, stats[i] ?? '', {
-          fontFamily: '"Courier New", monospace',
-          fontSize: '16px',
-          color: '#8a7a60',
-        })
-        .setOrigin(0.5);
+      this.add.text(width / 2, height / 2 + 10 + i * 26, stats[i] ?? '', TEXT.goStats).setOrigin(0.5);
     }
 
     this.makeButton(width / 2, height - 100, 'НАЧАТЬ НОВЫЙ RUN', () => {
@@ -78,12 +67,7 @@ export class GameOverScene extends Phaser.Scene {
     const bg = this.add.rectangle(x, y, w, h, COLORS.panelLight, 1);
     bg.setStrokeStyle(2, COLORS.border, 1);
     bg.setInteractive({ useHandCursor: true });
-    const t = this.add.text(x, y, label, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '20px',
-      color: '#d8c9a8',
-    });
-    t.setOrigin(0.5);
+    this.add.text(x, y, label, TEXT.button).setOrigin(0.5);
     bg.on('pointerover', () => bg.setFillStyle(COLORS.selected, 1));
     bg.on('pointerout', () => bg.setFillStyle(COLORS.panelLight, 1));
     bg.on('pointerdown', () => onClick());

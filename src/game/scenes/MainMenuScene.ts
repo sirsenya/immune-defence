@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { Game } from '../Game';
 import { COLORS } from '../../config/constants';
+import { TEXT, BUTTON } from '../../ui/styles';
 
 export class MainMenuScene extends Phaser.Scene {
   private mobka!: Game;
@@ -17,82 +18,77 @@ export class MainMenuScene extends Phaser.Scene {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor(COLORS.bg);
 
-    // Stamp texture as background
+    this.drawBackground(width, height);
+    this.drawHeader(width, height);
+    this.drawButtons(width, height);
+    this.drawFooter(width, height);
+  }
+
+  // ── Background (double-stamped paper border) ────────────────────────────
+  private drawBackground(width: number, height: number): void {
     const bg = this.add.graphics();
+
+    // outer thick border
     bg.fillStyle(COLORS.panel, 1);
     bg.fillRect(40, 40, width - 80, height - 80);
     bg.lineStyle(3, COLORS.border, 1);
     bg.strokeRect(40, 40, width - 80, height - 80);
+
+    // inner thin border
     bg.lineStyle(1, COLORS.border, 0.6);
     bg.strokeRect(60, 60, width - 120, height - 120);
+  }
 
-    // Title
-    const title = this.add.text(width / 2, height / 2 - 220, 'МОБКА', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '84px',
-      color: '#d8c9a8',
-    });
-    title.setOrigin(0.5);
+  // ── Header (title + subtitle + tagline) ────────────────────────────────
+  private drawHeader(width: number, height: number): void {
+    const cx = width / 2;
+    const cy = height / 2;
 
-    const subtitle = this.add.text(width / 2, height / 2 - 150, 'ОТДЕЛ МОБИЛИЗАЦИИ', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '20px',
-      color: '#8a7a60',
-    });
-    subtitle.setOrigin(0.5);
+    this.add.text(cx, cy - 220, 'МОБКА', TEXT.title).setOrigin(0.5);
+    this.add.text(cx, cy - 150, 'ОТДЕЛ МОБИЛИЗАЦИИ', TEXT.subtitle).setOrigin(0.5);
+    this.add.text(cx, cy - 110, '«план есть — надо выполнять»', TEXT.tagline).setOrigin(0.5);
+  }
 
-    const tag = this.add.text(width / 2, height / 2 - 110, '«план есть — надо вполнять »', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '16px',
-      color: '#a3331f',
-    });
-    tag.setOrigin(0.5);
+  // ── Buttons ─────────────────────────────────────────────────────────────
+  private drawButtons(width: number, height: number): void {
+    const cx = width / 2;
+    const cy = height / 2;
 
-    // Buttons
-    this.makeButton(width / 2, height / 2 + 20, 'НОВАЯ ИГРА', () => {
+    this.makeButton(cx, cy + 20, 'НОВАЯ ИГРА', () => {
       this.mobka.startNewRun();
       this.scene.start('Game');
     });
 
-    this.makeButton(width / 2, height / 2 + 80, 'ПРОДОЛЖИТЬ', () => {
+    this.makeButton(cx, cy + 80, 'ПРОДОЛЖИТЬ', () => {
       const ok = this.mobka.tryLoad();
       if (ok) this.scene.start('Game');
       else this.scene.start('Game');
     });
-
-    // Footer
-    const footer = this.add.text(
-      width / 2,
-      height - 72,
-      '«Не пытайтесь выполнить план. Пытайтесь его перевыполнить.»',
-      {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '14px',
-        color: '#5b4a36',
-      },
-    );
-    footer.setOrigin(0.5);
   }
 
+  // ── Footer ──────────────────────────────────────────────────────────────
+  private drawFooter(width: number, height: number): void {
+    this.add
+      .text(width / 2, height - 72, '«Не пытайтесь выполнить план. Пытайтесь его перевыполнить.»', TEXT.footer)
+      .setOrigin(0.5);
+  }
+
+  // ── Button factory ──────────────────────────────────────────────────────
   private makeButton(x: number, y: number, label: string, onClick: () => void): void {
-    const w = 320;
-    const h = 50;
-    const rect = this.add.rectangle(x, y, w, h, COLORS.panelLight, 1);
-    rect.setStrokeStyle(2, COLORS.border, 1);
-    rect.setInteractive({ useHandCursor: true });
-    const text = this.add.text(x, y, label, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '20px',
-      color: '#d8c9a8',
-    });
-    text.setOrigin(0.5);
+    const rect = this.add
+      .rectangle(x, y, BUTTON.width, BUTTON.height, COLORS.panelLight, 1)
+      .setStrokeStyle(BUTTON.borderWidth, COLORS.border, 1)
+      .setInteractive({ useHandCursor: true });
+
+    const text = this.add.text(x, y, label, TEXT.button).setOrigin(0.5);
+
     rect.on('pointerover', () => {
       rect.setFillStyle(COLORS.selected, 1);
-      text.setColor('#ffffff');
+      text.setColor(BUTTON.textHover);
     });
     rect.on('pointerout', () => {
       rect.setFillStyle(COLORS.panelLight, 1);
-      text.setColor('#d8c9a8');
+      text.setColor(BUTTON.textDefault);
     });
     rect.on('pointerdown', () => {
       rect.setFillStyle(COLORS.border, 1);

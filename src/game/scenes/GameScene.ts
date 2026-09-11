@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import type { Game } from '../Game';
 import type { ActionId, GameState, PersonData } from '../types/game';
 import { ACTIONS, COLORS, RUN_LENGTH } from '../../config/constants';
+import { TEXT, UI_COLORS, LAYOUT } from '../../ui/styles';
 
 interface CitizenCardRefs {
   container: Phaser.GameObjects.Container;
@@ -13,11 +14,6 @@ interface SelectedRef {
   container: Phaser.GameObjects.Container;
   person: PersonData;
 }
-
-const CARD_W = 220;
-const CARD_H = 150;
-const CARD_GAP_X = 12;
-const CARD_GAP_Y = 12;
 
 export class GameScene extends Phaser.Scene {
   private mobka!: Game;
@@ -78,65 +74,32 @@ export class GameScene extends Phaser.Scene {
 
   private drawLayout(width: number, height: number): void {
     // Header
-    this.add.rectangle(0, 0, width, 56, COLORS.panel, 1).setOrigin(0, 0);
-    const title = this.add.text(16, 14, 'МОБКА', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '26px',
-      color: '#d8c9a8',
-    });
-    title.setOrigin(0, 0);
-
-    this.dayLabel = this.add.text(width - 16, 14, '', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '20px',
-      color: '#d8c9a8',
-    });
-    this.dayLabel.setOrigin(1, 0);
+    this.add.rectangle(0, 0, width, LAYOUT.headerHeight, COLORS.panel, 1).setOrigin(0, 0);
+    this.add.text(16, 14, 'МОБКА', { ...TEXT.button, fontSize: '26px' }).setOrigin(0, 0);
+    this.dayLabel = this.add.text(width - 16, 14, '', TEXT.button).setOrigin(1, 0);
 
     // Left resources column
-    this.panel(8, 64, 220, height - 80);
-    this.add.text(20, 72, 'РЕСУРСЫ', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '14px',
-      color: '#a3331f',
-    });
+    this.panel(LAYOUT.resourcePanelX, 64, LAYOUT.resourcePanelWidth, height - 80);
+    this.add.text(20, 72, 'РЕСУРСЫ', TEXT.panelHeader);
 
     // Center pool
     this.panel(236, 64, width - 480, height - 196);
-    this.add.text(248, 72, 'КАРТОЧКИ ГРАЖДАН', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '14px',
-      color: '#a3331f',
-    });
+    this.add.text(248, 72, 'КАРТОЧКИ ГРАЖДАН', TEXT.panelHeader);
 
     // Right column: selected + combo + forecast
     this.panel(width - 236, 64, 228, 320);
-    this.add.text(width - 224, 72, 'ВЫБРАННЫЕ', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '14px',
-      color: '#a3331f',
-    });
+    this.add.text(width - 224, 72, 'ВЫБРАННЫЕ', TEXT.panelHeader);
 
     // Right bottom: actions
     this.panel(width - 236, 392, 228, height - 416);
-    this.add.text(width - 224, 400, 'ДЕЙСТВИЯ', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '14px',
-      color: '#a3331f',
-    });
+    this.add.text(width - 224, 400, 'ДЕЙСТВИЯ', TEXT.panelHeader);
 
     // Bottom log
-    const logH = 100;
+    const logH = LAYOUT.logHeight;
     this.panel(8, height - logH - 8, width - 16, logH);
-    this.add.text(20, height - logH - 4, 'ЖУРНАЛ', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '12px',
-      color: '#8a7a60',
-    });
+    this.add.text(20, height - logH - 4, 'ЖУРНАЛ', TEXT.small);
     this.logText = this.add.text(20, height - logH + 14, '', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '13px',
-      color: '#8a7a60',
+      ...TEXT.log,
       wordWrap: { width: width - 60 },
     });
   }
@@ -166,16 +129,8 @@ export class GameScene extends Phaser.Scene {
     for (let i = 0; i < labels.length; i++) {
       const def = labels[i]!;
       const y = startY + i * lineH;
-      this.add.text(startX, y, def.name, {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '13px',
-        color: '#d8c9a8',
-      });
-      const text = this.add.text(valueRightX, y, '', {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '14px',
-        color: '#ffffff',
-      });
+      this.add.text(startX, y, def.name, TEXT.resourceName);
+      const text = this.add.text(valueRightX, y, '', TEXT.resourceValue);
       text.setOrigin(1, 0);
       this.resourceTexts.push(text);
       // bar background (fits within the resource panel)
@@ -206,7 +161,13 @@ export class GameScene extends Phaser.Scene {
       const bar = this.resourceBars[i];
       if (!text || !bar) continue;
       const textValue = def.money ? `₽${value}` : `${value}${def.max <= 100 ? '' : '/' + def.max}`;
-      const color = def.money ? '#a3d97a' : def.key === 'discontent' ? (value > 60 ? '#ff6b3a' : '#d8c9a8') : '#ffffff';
+      const color = def.money
+        ? UI_COLORS.green
+        : def.key === 'discontent'
+          ? value > 60
+            ? UI_COLORS.warning
+            : UI_COLORS.cream
+          : UI_COLORS.white;
       text.setText(textValue);
       text.setColor(color);
       bar.clear();
@@ -238,8 +199,8 @@ export class GameScene extends Phaser.Scene {
     state.pool.forEach((person, idx) => {
       const col = idx % cols;
       const row = Math.floor(idx / cols);
-      const x = startX + col * (CARD_W + CARD_GAP_X);
-      const y = startY + row * (CARD_H + CARD_GAP_Y);
+      const x = startX + col * (LAYOUT.cardWidth + LAYOUT.cardGapX);
+      const y = startY + row * (LAYOUT.cardHeight + LAYOUT.cardGapY);
 
       const card = this.makeCitizenCard(person, x, y);
       this.poolContainer.add(card.container);
@@ -252,37 +213,20 @@ export class GameScene extends Phaser.Scene {
     const selected = this.mobka.state.selectedIds.includes(person.id);
     const fillColor = selected ? COLORS.selected : COLORS.panelLight;
 
-    const bg = this.add.rectangle(0, 0, CARD_W, CARD_H, fillColor, 1);
+    const bg = this.add.rectangle(0, 0, LAYOUT.cardWidth, LAYOUT.cardHeight, fillColor, 1);
     bg.setOrigin(0, 0);
     bg.setStrokeStyle(2, selected ? COLORS.warning : COLORS.border, 1);
     bg.setInteractive({ useHandCursor: true });
     container.add(bg);
 
     // Name
-    const nameText = this.add.text(8, 6, person.name, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '15px',
-      color: '#d8c9a8',
-    });
-    container.add(nameText);
+    container.add(this.add.text(8, 6, person.name, TEXT.cardName));
 
     // Age/profession line
-    const line1 = `${person.age} лет · ${person.profession}`;
-    const a = this.add.text(8, 28, line1, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '12px',
-      color: '#8a7a60',
-    });
-    container.add(a);
+    container.add(this.add.text(8, 28, `${person.age} лет · ${person.profession}`, TEXT.cardLine));
 
     // Family / income
-    const line2 = `Семья: ${person.familySize} · ₽${person.income}`;
-    const b = this.add.text(8, 46, line2, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '12px',
-      color: '#8a7a60',
-    });
-    container.add(b);
+    container.add(this.add.text(8, 46, `Семья: ${person.familySize} · ₽${person.income}`, TEXT.cardLine));
 
     // Stats bars
     const stats = [
@@ -293,12 +237,7 @@ export class GameScene extends Phaser.Scene {
     for (let i = 0; i < stats.length; i++) {
       const s = stats[i]!;
       const sy = 70 + i * 18;
-      const label = this.add.text(8, sy, s.label, {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '10px',
-        color: '#8a7a60',
-      });
-      container.add(label);
+      container.add(this.add.text(8, sy, s.label, TEXT.cardStatLabel));
       const barBg = this.add.rectangle(70, sy + 2, 100, 8, COLORS.bg, 1);
       barBg.setOrigin(0, 0);
       container.add(barBg);
@@ -306,32 +245,18 @@ export class GameScene extends Phaser.Scene {
       bar.fillStyle(s.color, 1);
       bar.fillRect(70, sy + 2, Math.max(0, Math.min(1, s.value / 100)) * 100, 8);
       container.add(bar);
-      const valueText = this.add.text(176, sy - 1, `${Math.round(s.value)}%`, {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '10px',
-        color: '#d8c9a8',
-      });
-      container.add(valueText);
+      container.add(this.add.text(176, sy - 1, `${Math.round(s.value)}%`, TEXT.cardStatValue));
     }
 
     // Connections indicator
     if (person.connections.length > 0) {
-      const conn = this.add.text(8, CARD_H - 16, `связи: ${person.connections.length}`, {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '10px',
-        color: '#c06030',
-      });
-      container.add(conn);
+      container.add(this.add.text(8, LAYOUT.cardHeight - 16, `связи: ${person.connections.length}`, TEXT.cardConn));
     }
 
     // Action label
     const action = this.mobka.state.lastActionByPerson[person.id];
     if (action) {
-      const a2 = this.add.text(CARD_W - 8, 6, ACTIONS[action].label, {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '10px',
-        color: '#c06030',
-      });
+      const a2 = this.add.text(LAYOUT.cardWidth - 8, 6, ACTIONS[action].label, TEXT.tinyOrange);
       a2.setOrigin(1, 0);
       container.add(a2);
     }
@@ -358,15 +283,13 @@ export class GameScene extends Phaser.Scene {
     this.selectedContainer.setSize(216, 280);
 
     this.comboText = this.add.text(width - 224, height - 320, '', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '12px',
-      color: '#c06030',
+      ...TEXT.small,
+      color: UI_COLORS.orange,
       wordWrap: { width: 216 },
     });
     this.forecastText = this.add.text(width - 224, height - 260, '', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '14px',
-      color: '#d8c9a8',
+      ...TEXT.resourceValue,
+      color: UI_COLORS.cream,
       wordWrap: { width: 216 },
     });
 
@@ -390,19 +313,10 @@ export class GameScene extends Phaser.Scene {
       bg.setStrokeStyle(1, isActive ? COLORS.warning : COLORS.border, 1);
       bg.setInteractive({ useHandCursor: true });
       container.add(bg);
-      const txt = this.add.text(6, 6, `${person.name}`, {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '11px',
-        color: '#d8c9a8',
-      });
-      container.add(txt);
+      container.add(this.add.text(6, 6, `${person.name}`, TEXT.selectedName));
       const act = state.lastActionByPerson[person.id];
       if (act) {
-        const at = this.add.text(210, 6, ACTIONS[act].label.slice(0, 6), {
-          fontFamily: '"Courier New", monospace',
-          fontSize: '10px',
-          color: '#a3331f',
-        });
+        const at = this.add.text(210, 6, ACTIONS[act].label.slice(0, 6), TEXT.tinyOrangeSmaller);
         at.setOrigin(1, 0);
         container.add(at);
       }
@@ -456,17 +370,9 @@ export class GameScene extends Phaser.Scene {
     bg.setStrokeStyle(1, COLORS.border, 1);
     bg.setInteractive({ useHandCursor: true });
     container.add(bg);
-    const title = this.add.text(8, 4, def.label, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '13px',
-      color: '#d8c9a8',
-    });
+    const title = this.add.text(8, 4, def.label, { ...TEXT.log, color: UI_COLORS.cream });
     container.add(title);
-    const cost = this.add.text(8, 22, `₽${def.costMoney} · адм ${def.costAdmin}`, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '10px',
-      color: '#8a7a60',
-    });
+    const cost = this.add.text(8, 22, `₽${def.costMoney} · адм ${def.costAdmin}`, TEXT.buttonCost);
     container.add(cost);
 
     bg.on('pointerdown', () => this.tryAction(def.id));
@@ -475,6 +381,7 @@ export class GameScene extends Phaser.Scene {
     container.setData('bg', bg);
     container.setData('title', title);
     container.setData('cost', cost);
+    container.setData('actionId', def.id);
     return container;
   }
 
@@ -495,15 +402,16 @@ export class GameScene extends Phaser.Scene {
   private refreshActions(): void {
     const state = this.mobka.state;
     const canAct = !!this.activePersonId && state.selectedIds.includes(this.activePersonId);
-    for (const [id, container] of this.actionButtons) {
-      const def = ACTIONS[id];
+    for (const [, container] of this.actionButtons) {
       const bg = container.getData('bg') as Phaser.GameObjects.Rectangle;
       const title = container.getData('title') as Phaser.GameObjects.Text;
       const cost = container.getData('cost') as Phaser.GameObjects.Text;
+      const id = container.getData('actionId') as ActionId;
+      const def = ACTIONS[id];
       const enough = state.resources.money >= def.costMoney && state.resources.admin >= def.costAdmin;
       bg.setFillStyle(canAct && enough ? COLORS.panelLight : COLORS.panel, 1);
-      title.setColor(canAct ? '#d8c9a8' : '#5b4a36');
-      cost.setColor(enough ? '#8a7a60' : '#a3331f');
+      title.setColor(canAct ? UI_COLORS.cream : UI_COLORS.darker);
+      cost.setColor(enough ? UI_COLORS.dim : UI_COLORS.red);
     }
   }
 
@@ -520,13 +428,7 @@ export class GameScene extends Phaser.Scene {
     bg.setStrokeStyle(2, COLORS.warning, 1);
     bg.setInteractive({ useHandCursor: true });
     this.finishBtn.add(bg);
-    const t = this.add.text(btnW / 2, btnH / 2, 'ЗАВЕРШИТЬ ДЕНЬ', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '20px',
-      color: '#d8c9a8',
-    });
-    t.setOrigin(0.5);
-    this.finishBtn.add(t);
+    this.finishBtn.add(this.add.text(btnW / 2, btnH / 2, 'ЗАВЕРШИТЬ ДЕНЬ', TEXT.button).setOrigin(0.5));
     bg.on('pointerdown', () => this.onFinish());
     bg.on('pointerover', () => bg.setFillStyle(COLORS.redBright, 1));
     bg.on('pointerout', () => bg.setFillStyle(COLORS.stamp, 1));

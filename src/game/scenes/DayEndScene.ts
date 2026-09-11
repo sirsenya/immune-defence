@@ -5,6 +5,7 @@ import { COLORS, RUN_LENGTH } from '../../config/constants';
 import { UPGRADE_POOL, hasUpgrade } from '../data/upgrades';
 import { pickEventForState } from '../systems/EventSystem';
 import { createRng, shuffle } from '../utils/random';
+import { TEXT, UI_COLORS } from '../../ui/styles';
 
 export class DayEndScene extends Phaser.Scene {
   private mobka!: Game;
@@ -52,19 +53,15 @@ export class DayEndScene extends Phaser.Scene {
       .rectangle(panelX + panelW / 2, panelY + panelH / 2, panelW, panelH, COLORS.panel, 1)
       .setStrokeStyle(2, COLORS.border, 1);
 
-    this.add.text(panelX + 20, panelY + 14, `ИТОГИ ДНЯ ${result.day}`, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '28px',
-      color: '#a3331f',
-    });
+    this.add.text(panelX + 20, panelY + 14, `ИТОГИ ДНЯ ${result.day}`, TEXT.dayTitle);
 
     const headlineColor =
-      result.overfulfilledPercent >= 5 ? '#a3d97a' : result.overfulfilledPercent >= -5 ? '#d8c9a8' : '#ff6b3a';
-    this.add.text(panelX + 20, panelY + 60, result.message, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '36px',
-      color: headlineColor,
-    });
+      result.overfulfilledPercent >= 5
+        ? UI_COLORS.green
+        : result.overfulfilledPercent >= -5
+          ? UI_COLORS.cream
+          : UI_COLORS.warning;
+    this.add.text(panelX + 20, panelY + 60, result.message, { ...TEXT.headline, color: headlineColor });
 
     const lines = [
       `План:           ${result.target}`,
@@ -80,11 +77,7 @@ export class DayEndScene extends Phaser.Scene {
       `${result.securityDelta >= 0 ? '+' : ''}${result.securityDelta} безопасность`,
     ];
     for (let i = 0; i < lines.length; i++) {
-      this.add.text(panelX + 40, panelY + 130 + i * 22, lines[i] ?? '', {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '16px',
-        color: '#d8c9a8',
-      });
+      this.add.text(panelX + 40, panelY + 130 + i * 22, lines[i] ?? '', TEXT.body);
     }
 
     // Continue button
@@ -114,15 +107,9 @@ export class DayEndScene extends Phaser.Scene {
       .rectangle(panelX + panelW / 2, panelY + panelH / 2, panelW, panelH, COLORS.panel, 1)
       .setStrokeStyle(2, COLORS.border, 1);
 
-    this.add.text(panelX + 20, panelY + 14, `СОБЫТИЕ: ${this.currentEvent.title}`, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '22px',
-      color: '#a3331f',
-    });
+    this.add.text(panelX + 20, panelY + 14, `СОБЫТИЕ: ${this.currentEvent.title}`, TEXT.eventTitle);
     this.add.text(panelX + 20, panelY + 56, this.currentEvent.text, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '16px',
-      color: '#d8c9a8',
+      ...TEXT.body,
       wordWrap: { width: panelW - 40 },
     });
 
@@ -171,27 +158,18 @@ export class DayEndScene extends Phaser.Scene {
       .rectangle(panelX + panelW / 2, panelY + panelH / 2, panelW, panelH, COLORS.panel, 1)
       .setStrokeStyle(2, COLORS.border, 1);
 
-    this.add.text(panelX + 20, panelY + 14, 'ОТДЕЛ СНАБЖЕНИЯ', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '22px',
-      color: '#a3331f',
-    });
+    this.add.text(panelX + 20, panelY + 14, 'ОТДЕЛ СНАБЖЕНИЯ', TEXT.eventTitle);
 
     const state = this.mobka.state;
     this.add
       .text(panelX + panelW - 20, panelY + 16, `Бюджет: ₽${state.resources.money}`, {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '16px',
-        color: '#a3d97a',
+        ...TEXT.body,
+        color: UI_COLORS.green,
       })
       .setOrigin(1, 0);
 
     if (this.currentShopItems.length === 0) {
-      this.add.text(panelX + 20, panelY + 60, 'Снабжение закончилось. Все улучшения приобретены.', {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '16px',
-        color: '#8a7a60',
-      });
+      this.add.text(panelX + 20, panelY + 60, 'Снабжение закончилось. Все улучшения приобретены.', TEXT.bodyDim);
     } else {
       const colW = (panelW - 60) / 2;
       for (let i = 0; i < this.currentShopItems.length; i++) {
@@ -225,34 +203,23 @@ export class DayEndScene extends Phaser.Scene {
     bg.setStrokeStyle(1, COLORS.border, 1);
     bg.setInteractive({ useHandCursor: true });
 
-    this.add.text(x + 12, y + 8, u.name, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '15px',
-      color: '#d8c9a8',
-    });
+    this.add.text(x + 12, y + 8, u.name, TEXT.shopName);
     this.add.text(x + 12, y + 30, u.description, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '12px',
-      color: '#8a7a60',
+      ...TEXT.shopDesc,
       wordWrap: { width: w - 24 },
     });
 
     const canBuy = this.mobka.state.resources.money >= u.cost;
     const costText = this.add.text(x + w - 12, y + 8, `₽${u.cost}`, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '14px',
-      color: canBuy ? '#a3d97a' : '#a3331f',
+      ...TEXT.shopCost,
+      color: canBuy ? UI_COLORS.green : UI_COLORS.red,
     });
     costText.setOrigin(1, 0);
 
     const buyBtn = this.add.rectangle(x + w / 2, y + h - 24, w - 24, 28, canBuy ? COLORS.stamp : COLORS.panel, 1);
     buyBtn.setStrokeStyle(1, COLORS.warning, 1);
     buyBtn.setInteractive({ useHandCursor: canBuy });
-    const buyLabel = this.add.text(x + w / 2, y + h - 24, 'КУПИТЬ', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '13px',
-      color: '#d8c9a8',
-    });
+    const buyLabel = this.add.text(x + w / 2, y + h - 24, 'КУПИТЬ', TEXT.buttonBuy);
     buyLabel.setOrigin(0.5);
 
     if (canBuy) {
@@ -270,21 +237,13 @@ export class DayEndScene extends Phaser.Scene {
   private drawHeader(width: number): void {
     const s = this.mobka.state;
     this.add.rectangle(0, 0, width, 70, COLORS.panel, 1).setOrigin(0, 0);
-    this.add.text(16, 12, 'МОБКА', {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '24px',
-      color: '#d8c9a8',
-    });
+    this.add.text(16, 12, 'МОБКА', { ...TEXT.button, fontSize: '24px' });
     this.add
       .text(
         width - 16,
         14,
         `ДЕНЬ ${s.day}/${RUN_LENGTH}   ПЛАН ${s.plan}   ₽${s.resources.money}   адм ${s.resources.admin}   недовольство ${s.resources.discontent}`,
-        {
-          fontFamily: '"Courier New", monospace',
-          fontSize: '14px',
-          color: '#d8c9a8',
-        },
+        TEXT.panelHeader,
       )
       .setOrigin(1, 0);
   }
@@ -301,11 +260,7 @@ export class DayEndScene extends Phaser.Scene {
     const bg = this.add.rectangle(x + w / 2, y + h / 2, w, h, COLORS.panelLight, 1);
     bg.setStrokeStyle(2, COLORS.border, 1);
     bg.setInteractive({ useHandCursor: true });
-    const t = this.add.text(x + w / 2, y + h / 2, label, {
-      fontFamily: '"Courier New", monospace',
-      fontSize: '18px',
-      color: '#d8c9a8',
-    });
+    const t = this.add.text(x + w / 2, y + h / 2, label, TEXT.buttonSmall);
     t.setOrigin(0.5);
     bg.on('pointerover', () => bg.setFillStyle(COLORS.selected, 1));
     bg.on('pointerout', () => bg.setFillStyle(COLORS.panelLight, 1));
@@ -315,9 +270,8 @@ export class DayEndScene extends Phaser.Scene {
     });
     if (sub) {
       this.add.text(x + 12, y + h - 16, sub, {
-        fontFamily: '"Courier New", monospace',
-        fontSize: '11px',
-        color: '#8a7a60',
+        ...TEXT.tiny,
+        color: UI_COLORS.dim,
         wordWrap: { width: w - 24 },
       });
     }
